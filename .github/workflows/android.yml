@@ -1,40 +1,26 @@
-name: Android CI  # 工作流名称
+name: Android CI
 
 on:
   push:
-    branches:
-      - main  # 当代码推送到 main 分支时触发
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main  # 当 PR 目标是 main 分支时触发
-  workflow_dispatch:  # 允许手动触发
+    branches: [ "main" ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 运行环境：最新 Ubuntu
+
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4  # 拉取代码
+    - uses: actions/checkout@v4
+    - name: set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4  # 配置 Java 17
-        with:
-          java-version: '17'  # 版本
-          distribution: 'temurin'  # 使用 Temurin JDK
-          cache: gradle  # 启用 Gradle 缓存，提高构建速度
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew  # 赋予 gradlew 可执行权限
-
-      - name: Verify Java version
-        run: java -version  # 确保 Java 版本正确
-
-      - name: Build with Gradle
-        run: ./gradlew build  # 运行 Gradle 构建
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4  # 上传 APK 产物
-        with:
-          name: app-release  # 产物名称
-          path: app/build/outputs/apk/release/*.apk  # APK 文件路径
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
